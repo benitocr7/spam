@@ -247,6 +247,9 @@ def render_email(msg, source_folder="inbox"):
     full_body = msg.get('full_body', '')
     initial = sender[0].upper() if sender else "?"
     msg_id = msg.get('id', 'unknown')
+
+    score = msg.get("spam_score", 0.0)
+    reason = msg.get("spam_reason", "")
     
     # Layout: Checkbox | Avatar+Content
     # Using a tighter ratio to keep them close
@@ -274,13 +277,9 @@ def render_email(msg, source_folder="inbox"):
         """, unsafe_allow_html=True)
 
         # Analysis Data simplified (Outside card to not break layout)
-        score = msg.get("spam_score", 0.0)
-        reason = msg.get("spam_reason", "")
-        
         if score > 0.1 or source_folder == "spam":
             with st.expander(f"🕵️ Ver Análisis ({int(score*100)}%)"):
                 st.caption(f"**Diagnóstico:** {reason}")
-                full_body = msg.get('full_body', '')
                 st.code(full_body[:300], language="html")
 
 # --- Inbox Tab ---
